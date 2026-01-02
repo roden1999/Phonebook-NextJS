@@ -1,7 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from 'react-hot-toast';
 import "primereact/resources/themes/lara-light-cyan/theme.css";
-// import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
