@@ -10,6 +10,14 @@ import { InputText } from "primereact/inputtext";
 import { Message } from "primereact/message";
 import toast from 'react-hot-toast';
 
+const CONTACT_INTERFACE = {
+  first_name: "",
+  middle_name: "",
+  last_name: "",
+  phone_number: "",
+  address: ""
+}
+
 export default function Home() {
   const [data, setData] = useState([]);
   const [filteredContacts, setFilteredContacts] = useState([]);
@@ -21,12 +29,8 @@ export default function Home() {
   const [showModal, setShowModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-  const [id, setId] = useState('');
-  const [firstName, setFirstName] = useState("");
-  const [middleName, setMiddleName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phonenumber, setPhonenumber] = useState("");
-  const [address, setAddress] = useState("");
+
+  const [contacts, setContacts] = useState(CONTACT_INTERFACE);
 
   useEffect(() => {
     if (!loaded) {
@@ -62,33 +66,23 @@ export default function Home() {
   const handleEdit = (e) => {
     console.log("Edit:", e);
     setEditModal(true);
-    setId(e.id);
-    setFirstName(e.first_name);
-    setMiddleName(e.middle_name);
-    setLastName(e.last_name);
-    setPhonenumber(e.phone_number);
-    setAddress(e.address);
+    setContacts(e);
   };
 
-  const handleDelete = (id) => {
-    console.log("Delete:", id);
+  const handleDelete = (e) => {
+    console.log("Delete:", e);
     setDeleteModal(true);
-    setId(id)
+    setContacts(e);
   };
 
   const handleAddContact = async () => {
     setLoader(true);
+    console.log(contacts);
     try {
       const res = await fetch('/api/contacts/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          first_name: firstName,
-          middle_name: middleName,
-          last_name: lastName,
-          phone_number: phonenumber,
-          address: address,
-        }),
+        body: JSON.stringify(contacts),
       });
 
       const data = await res.json();
@@ -100,6 +94,7 @@ export default function Home() {
       }
 
       setShowModal(false);
+      setContacts(CONTACT_INTERFACE);
       setFirstName("");
       setMiddleName("");
       setLastName("");
@@ -117,18 +112,12 @@ export default function Home() {
 
   const handlEditContact = async () => {
     setLoader(true);
+    console.log(contacts);
     try {
       const res = await fetch('/api/contacts/', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: id,
-          first_name: firstName,
-          middle_name: middleName,
-          last_name: lastName,
-          phone_number: phonenumber,
-          address: address,
-        }),
+        body: JSON.stringify(contacts),
       });
 
       const data = await res.json();
@@ -140,6 +129,7 @@ export default function Home() {
       }
 
       setEditModal(false);
+      setContacts(CONTACT_INTERFACE);
       setId('');
       setFirstName("");
       setMiddleName("");
@@ -158,11 +148,12 @@ export default function Home() {
 
   const handlDeleteContact = async () => {
     setLoader(true);
+    console.log(contacts.id);
     try {
       const res = await fetch('/api/contacts/', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: id }),
+        body: JSON.stringify({ id: contacts.id }),
       });
 
       const data = await res.json();
@@ -174,7 +165,7 @@ export default function Home() {
       }
 
       setDeleteModal(false);
-      setId('');
+      setContacts(CONTACT_INTERFACE);
 
       toast.success('Contact deleted successfully!');
     } catch {
@@ -187,25 +178,22 @@ export default function Home() {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setFirstName("");
-    setMiddleName("");
-    setLastName("");
-    setPhonenumber("");
-    setAddress("");
+    setContacts(CONTACT_INTERFACE);
   };
 
   const handleCloseEditModal = () => {
     setEditModal(false);
-    setFirstName("");
-    setMiddleName("");
-    setLastName("");
-    setPhonenumber("");
-    setAddress("");
+    setContacts(CONTACT_INTERFACE);
   };
 
   const handleCloseDeleteModal = () => {
     setDeleteModal(false);
-    setId('');
+    setContacts(CONTACT_INTERFACE);
+  }
+
+  const handleInputChange = (e, prop) => {
+    contacts[prop] = e.target.value;
+    setContacts(contacts);
   }
 
   return (
@@ -282,7 +270,7 @@ export default function Home() {
                   label="Delete"
                   severity="danger"
                   size="small"
-                  onClick={() => handleDelete(rowData.id)}
+                  onClick={() => handleDelete(rowData)}
                 />
               </div>
             )}
@@ -327,9 +315,9 @@ export default function Home() {
             <label htmlFor="firstName">First Name</label>
             <InputText
               id="firstName"
-              value={firstName}
+              // value={firstName}
               placeholder="First Name"
-              onChange={(e) => setFirstName(e.target.value)}
+              onChange={(e) => handleInputChange(e, "first_name")}
             />
           </div>
 
@@ -337,9 +325,9 @@ export default function Home() {
             <label htmlFor="middleName">Middle Name (Optional)</label>
             <InputText
               id="middleName"
-              value={middleName}
+              // value={middleName}
               placeholder="Middle Name"
-              onChange={(e) => setMiddleName(e.target.value)}
+              onChange={(e) => handleInputChange(e, "middle_name")}
             />
           </div>
 
@@ -347,9 +335,9 @@ export default function Home() {
             <label htmlFor="lastName">Last Name</label>
             <InputText
               id="lastName"
-              value={lastName}
+              //value={lastName}
               placeholder="Last Name"
-              onChange={(e) => setLastName(e.target.value)}
+              onChange={(e) => handleInputChange(e, "last_name")}
             />
           </div>
 
@@ -357,9 +345,9 @@ export default function Home() {
             <label htmlFor="phoneNumber">Phone Number</label>
             <InputText
               id="phoneNumber"
-              value={phonenumber}
+              //value={phonenumber}
               placeholder="Phone Number"
-              onChange={(e) => setPhonenumber(e.target.value)}
+              onChange={(e) => handleInputChange(e, "phone_number")}
             />
           </div>
 
@@ -367,9 +355,9 @@ export default function Home() {
             <label htmlFor="address">Address (Optional)</label>
             <InputText
               id="address"
-              value={address}
+              //value={address}
               placeholder="Address"
-              onChange={(e) => setAddress(e.target.value)}
+              onChange={(e) => handleInputChange(e, "address")}
             />
           </div>
         </div>
@@ -412,9 +400,9 @@ export default function Home() {
             <label htmlFor="firstName">First Name</label>
             <InputText
               id="firstName"
-              value={firstName}
+              defaultValue={contacts.first_name}
               placeholder="First Name"
-              onChange={(e) => setFirstName(e.target.value)}
+              onChange={(e) => handleInputChange(e, "first_name")}
             />
           </div>
 
@@ -422,9 +410,9 @@ export default function Home() {
             <label htmlFor="middleName">Middle Name (Optional)</label>
             <InputText
               id="middleName"
-              value={middleName}
+              defaultValue={contacts.middle_name}
               placeholder="Middle Name"
-              onChange={(e) => setMiddleName(e.target.value)}
+              onChange={(e) => handleInputChange(e, "middle_name")}
             />
           </div>
 
@@ -432,9 +420,9 @@ export default function Home() {
             <label htmlFor="lastName">Last Name</label>
             <InputText
               id="lastName"
-              value={lastName}
+              defaultValue={contacts.last_name}
               placeholder="Last Name"
-              onChange={(e) => setLastName(e.target.value)}
+              onChange={(e) => handleInputChange(e, "last_name")}
             />
           </div>
 
@@ -442,9 +430,9 @@ export default function Home() {
             <label htmlFor="phoneNumber">Phone Number</label>
             <InputText
               id="phoneNumber"
-              value={phonenumber}
+              defaultValue={contacts.phone_number}
               placeholder="Phone Number"
-              onChange={(e) => setPhonenumber(e.target.value)}
+              onChange={(e) => handleInputChange(e, "phone_number")}
             />
           </div>
 
@@ -452,9 +440,9 @@ export default function Home() {
             <label htmlFor="address">Address (Optional)</label>
             <InputText
               id="address"
-              value={address}
+              defaultValue={contacts.address}
               placeholder="Address"
-              onChange={(e) => setAddress(e.target.value)}
+              onChange={(e) => handleInputChange(e, "address")}
             />
           </div>
         </div>
@@ -475,7 +463,7 @@ export default function Home() {
             />
             <Button
               label="Delete"
-              severity="primary"
+              severity="danger"
               disabled={loader}
               onClick={handlDeleteContact}
             />
