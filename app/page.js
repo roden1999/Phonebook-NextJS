@@ -10,6 +10,9 @@ import { InputText } from "primereact/inputtext";
 import { Message } from "primereact/message";
 import toast from 'react-hot-toast';
 
+// var apihost = "/api/routes/contacts/";
+var apihost = "/api/routes/contacts_supabase/";
+
 const CONTACT_INTERFACE = {
   first_name: "",
   middle_name: "",
@@ -34,7 +37,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!loaded) {
-      fetch("/api/contacts/")
+      fetch(apihost)
         .then((res) => res.json())
         .then((resData) => {
           setData(resData);
@@ -79,7 +82,7 @@ export default function Home() {
     setLoader(true);
     console.log(contacts);
     try {
-      const res = await fetch('/api/contacts/', {
+      const res = await fetch(apihost, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(contacts),
@@ -114,7 +117,7 @@ export default function Home() {
     setLoader(true);
     console.log(contacts);
     try {
-      const res = await fetch('/api/contacts/', {
+      const res = await fetch(apihost, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(contacts),
