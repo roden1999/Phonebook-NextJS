@@ -10,7 +10,7 @@ export async function GET() {
 
 export async function POST(request) {
   const body = await request.json();
-  console.log(!body.last_name?.trim());
+  console.log(body);
   if (!body.first_name?.trim() || !body.last_name?.trim() || !body.phone_number?.trim()) {
     throw new Error('Missing required fields');
   }
@@ -19,15 +19,8 @@ export async function POST(request) {
   try {
     await pool
       .request()
-      .input('first_name', body.first_name)
-      .input('middle_name', body.middle_name)
-      .input('last_name', body.last_name)
-      .input('phone_number', body.phone_number)
-      .input('address', body.address)
-      .query(
-        `INSERT INTO Contacts (first_name, middle_name, last_name, phone_number, address, is_deleted)
-       VALUES (@first_name, @middle_name, @last_name, @phone_number, @address, 0)`
-      );
+      .input('jsonData', JSON.stringify(body))
+      .execute('[post_contact]');
 
     return NextResponse.json({ message: "Save Successfully", body }, { status: 201 });
   } catch (err) {
@@ -46,22 +39,14 @@ export async function PUT(request) {
   try {
     await pool
       .request()
-      .input('id', body.id)
-      .input('first_name', body.first_name)
-      .input('middle_name', body.middle_name)
-      .input('last_name', body.last_name)
-      .input('phone_number', body.phone_number)
-      .input('address', body.address)
-      .query(`UPDATE Contacts
-            SET
-                first_name = @first_name,
-                middle_name = @middle_name,
-                last_name = @last_name,
-                phone_number = @phone_number,
-                address = @address
-            WHERE id = @id
-            AND is_deleted = 0;
-        `);
+      .input('jsonData', JSON.stringify(body))
+      // .input('id', body.id)
+      // .input('first_name', body.first_name)
+      // .input('middle_name', body.middle_name)
+      // .input('last_name', body.last_name)
+      // .input('phone_number', body.phone_number)
+      // .input('address', body.address)
+      .execute('[post_contact]');
 
     return NextResponse.json({ message: "Updated successfuly", body }, { status: 201 });
   } catch (err) {
@@ -81,12 +66,13 @@ export async function DELETE(request) {
     await pool
       .request()
       .input('id', body.id)
-      .query(`UPDATE Contacts
-            SET
-                is_deleted = 1
-            WHERE id = @id
-            AND is_deleted = 0;
-      `);
+      .execute('[delete_contact]')
+      // .query(`UPDATE Contacts
+      //       SET
+      //           is_deleted = 1
+      //       WHERE id = @id
+      //       AND is_deleted = 0;
+      // `);
 
     return NextResponse.json({ message: "Deleted successfuly", body }, { status: 201 });
   } catch (err) {
