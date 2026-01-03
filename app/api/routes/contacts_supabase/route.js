@@ -27,7 +27,7 @@ export async function POST(request) {
 
         if (error) {
             console.log(error);
-            return NextResponse.json({ error: error.message }, { status: 400 });
+            return NextResponse.json({ error: error.message }, { status: 401 });
         }
 
         return NextResponse.json({ message: "Save Successfully", body }, { status: 201 });
@@ -49,7 +49,7 @@ export async function PUT(request) {
         });
 
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 400 });
+            return NextResponse.json({ error: error.message }, { status: 401 });
         }
 
         return NextResponse.json({ message: "Updated successfuly", body }, { status: 201 });
@@ -60,20 +60,21 @@ export async function PUT(request) {
 
 export async function DELETE(request) {
     const body = await request.json();
-    console.log(body.id);
+    console.log("Id:", body.id);
     if (!body.id) {
         throw new Error('Missing Id');
     }
 
-    const pool = await getConnection();
     try {
         const { error } = await supabase.rpc('delete_contact', {
             id: body.id,
         });
 
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 400 });
+            console.log(error);
+            return NextResponse.json({ error: error.message }, { status: 401 });
         }
+
         return NextResponse.json({ message: "Deleted successfuly", body }, { status: 201 });
     } catch (err) {
         return NextResponse.json({ message: err.message }, { status: 400 });
