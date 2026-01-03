@@ -1,6 +1,9 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import { Toaster } from 'react-hot-toast';
 import "primereact/resources/themes/lara-light-cyan/theme.css";
+import 'primereact/resources/themes/saga-blue/theme.css';  // or any theme
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css'; // this is required for icons
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,9 +23,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={`${geistSans.variable} ${geistMono.variable}`} style={{ margin: 0, padding: 0 }}>
         {children}
-        <Toaster position="top-right" reverseOrder={false} />
       </body>
     </html>
   );
