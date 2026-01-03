@@ -16,8 +16,7 @@
     "primeicons": "^7.0.0",
     "primereact": "^10.9.7",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "react-hot-toast": "^2.6.0"
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
     "babel-plugin-react-compiler": "1.0.0",
