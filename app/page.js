@@ -133,7 +133,7 @@ export default function Home() {
         return;
       }
 
-      setEditModal(false);
+      // setEditModal(false);
       setContacts(CONTACT_INTERFACE);
       setEditingRows({});
 
